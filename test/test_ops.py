@@ -413,6 +413,16 @@ class RoIAlignTester(unittest.TestCase):
 
         assert torch.allclose(x.grad, gt_grad), 'gradient incorrect for RoIAlign CPU'
 
+        x2 = x.detach().requires_grad_()
+        y2 = torch.ops.torchvision.roi_align(x2, rois,
+                                             roi_align.spatial_scale,
+                                             roi_align.output_size[0],
+                                             roi_align.output_size[1],
+                                             roi_align.sampling_ratio)
+        y2.sum().backward()
+
+        assert torch.allclose(x2.grad, gt_grad), 'gradient incorrect for RoIAlign CPU in custom op'
+
     def test_roi_align_gradcheck_cpu(self):
         dtype = torch.float64
         device = torch.device('cpu')
