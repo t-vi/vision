@@ -34,8 +34,9 @@ def roi_pool(input, boxes, output_size, spatial_scale=1.0):
     rois = boxes
     if not isinstance(rois, torch.Tensor):
         rois = convert_boxes_to_roi_format(rois)
-    return torch.ops.torchvision.roi_pool(input, rois, spatial_scale,
-                                          output_size[0], output_size[1])
+    result, _ = torch.ops.torchvision.roi_pool(input, rois, spatial_scale,
+                                               output_size[0], output_size[1])
+    return result
 
 
 class RoIPool(nn.Module):
